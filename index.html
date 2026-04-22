@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Roaming Skills Lab — Book a Session | Court Vision Basketball</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800;900&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --or:#E8671A;--orl:#FF8038;--dim:rgba(232,103,26,0.12);
+  --dk:#0a0a14;--dk2:#0f0f1c;--bd:rgba(255,255,255,0.09);
+  --tx:#fff;--mt:rgba(255,255,255,0.55);--ft:rgba(255,255,255,0.28);
+  --fd:'Barlow Condensed',sans-serif;--fb:'Barlow',sans-serif;
+  --green:#1D9E75;--green-dim:rgba(29,158,117,0.12);
+}
+html{scroll-behavior:smooth}
+body{background:var(--dk);color:var(--tx);font-family:var(--fb);font-size:15px;line-height:1.6;min-height:100vh}
+
+/* NAV */
+nav{background:rgba(10,10,20,0.96);backdrop-filter:blur(10px);border-bottom:1px solid var(--bd);padding:0 32px;height:64px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50}
+.nav-logo{font-family:var(--fd);font-size:18px;font-weight:800;color:var(--or)}
+.nav-logo span{color:var(--tx)}
+.nav-back{font-size:13px;color:var(--mt);text-decoration:none;display:flex;align-items:center;gap:6px;transition:color 0.2s}
+.nav-back:hover{color:var(--or)}
+.nav-back::before{content:'←';font-size:16px}
+
+/* HERO */
+.booking-hero{background:var(--dk2);padding:48px 32px 40px;border-bottom:1px solid var(--bd)}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:var(--dim);border:1px solid rgba(232,103,26,0.3);border-radius:20px;padding:5px 14px;margin-bottom:14px}
+.badge-dot{width:7px;height:7px;background:var(--or);border-radius:50%;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.5;transform:scale(1.3)}}
+.badge-text{font-size:11px;font-weight:700;color:var(--or);letter-spacing:1.5px;text-transform:uppercase}
+.hero-title{font-family:var(--fd);font-size:48px;font-weight:900;text-transform:uppercase;line-height:1;margin-bottom:10px}
+.hero-title span{color:var(--or)}
+.hero-sub{font-size:15px;color:var(--mt);max-width:560px;line-height:1.7;margin-bottom:20px}
+.hero-stats{display:flex;gap:24px;flex-wrap:wrap}
+.hstat{text-align:center}
+.hstat-val{font-family:var(--fd);font-size:24px;font-weight:800;color:var(--or)}
+.hstat-label{font-size:11px;color:var(--ft)}
+
+/* MAIN LAYOUT */
+.booking-layout{display:grid;grid-template-columns:1fr 380px;gap:0;min-height:calc(100vh - 64px - 180px)}
+.booking-form{padding:36px 32px;border-right:1px solid var(--bd)}
+.booking-summary{padding:36px 28px;background:var(--dk2);position:sticky;top:64px;height:fit-content}
+
+/* STEPS */
+.step-indicator{display:flex;align-items:center;gap:0;margin-bottom:36px}
+.step-item{display:flex;align-items:center;gap:8px}
+.step-num{width:28px;height:28px;border-radius:50%;border:1.5px solid var(--bd);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;color:var(--mt);flex-shrink:0;transition:all 0.3s}
+.step-num.active{background:var(--or);border-color:var(--or);color:#fff}
+.step-num.done{background:var(--green);border-color:var(--green);color:#fff}
+.step-label{font-size:12px;color:var(--mt);white-space:nowrap}
+.step-label.active{color:var(--tx);font-weight:600}
+.step-connector{flex:1;height:1px;background:var(--bd);margin:0 8px;min-width:20px}
+.step-connector.done{background:var(--green)}
+
+/* FORM SECTIONS */
+.form-section{display:none}
+.form-section.active{display:block}
+.form-section-title{font-family:var(--fd);font-size:26px;font-weight:800;text-transform:uppercase;margin-bottom:6px}
+.form-section-sub{font-size:14px;color:var(--mt);margin-bottom:28px;line-height:1.6}
+
+/* SESSION TYPE CARDS */
+.session-types{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:24px}
+.session-type-card{background:rgba(255,255,255,0.04);border:1.5px solid var(--bd);border-radius:12px;padding:18px 16px;cursor:pointer;transition:all 0.2s;user-select:none}
+.session-type-card:hover{border-color:rgba(232,103,26,0.4);background:rgba(232,103,26,0.04)}
+.session-type-card.selected{border-color:var(--or);background:var(--dim)}
+.stc-icon{font-size:24px;margin-bottom:10px}
+.stc-name{font-family:var(--fd);font-size:17px;font-weight:800;color:var(--tx);text-transform:uppercase;margin-bottom:4px}
+.stc-desc{font-size:12px;color:var(--mt);line-height:1.5;margin-bottom:10px}
+.stc-price{font-size:14px;font-weight:600;color:var(--or)}
+
+/* COURT CARDS */
+.court-grid{display:flex;flex-direction:column;gap:10px;margin-bottom:24px}
+.court-card{background:rgba(255,255,255,0.04);border:1.5px solid var(--bd);border-radius:12px;padding:16px 20px;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;gap:16px;user-select:none}
+.court-card:hover{border-color:rgba(232,103,26,0.4)}
+.court-card.selected{border-color:var(--or);background:var(--dim)}
+.court-map-icon{width:44px;height:44px;background:rgba(255,255,255,0.06);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.court-info{}
+.court-name{font-size:15px;font-weight:600;color:var(--tx);margin-bottom:2px}
+.court-detail{font-size:12px;color:var(--mt)}
+.court-tag{margin-left:auto;font-size:10px;font-weight:700;padding:3px 10px;border-radius:20px;white-space:nowrap}
+.tag-free{background:var(--green-dim);color:var(--green);border:1px solid rgba(29,158,117,0.3)}
+.tag-popular{background:var(--dim);color:var(--or);border:1px solid rgba(232,103,26,0.3)}
+
+/* CUSTOM COURT */
+.custom-court-input{margin-top:8px}
+label{display:block;font-size:12px;font-weight:600;color:var(--mt);letter-spacing:0.5px;text-transform:uppercase;margin-bottom:6px}
+input,select,textarea{width:100%;background:rgba(255,255,255,0.05);border:1px solid var(--bd);border-radius:8px;padding:12px 14px;font-family:var(--fb);font-size:14px;color:var(--tx);transition:border-color 0.2s;outline:none}
+input:focus,select:focus,textarea:focus{border-color:var(--or)}
+input::placeholder,textarea::placeholder{color:var(--ft)}
+select option{background:var(--dk2);color:var(--tx)}
+textarea{resize:vertical;min-height:80px}
+.input-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px}
+.input-group{margin-bottom:16px}
+
+/* DATE/TIME GRID */
+.date-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-bottom:24px}
+.date-btn{background:rgba(255,255,255,0.04);border:1px solid var(--bd);border-radius:8px;padding:8px 4px;text-align:center;cursor:pointer;transition:all 0.2s;user-select:none}
+.date-btn:hover{border-color:rgba(232,103,26,0.4)}
+.date-btn.selected{background:var(--or);border-color:var(--or)}
+.date-btn.disabled{opacity:0.3;cursor:not-allowed}
+.date-day{font-size:10px;color:var(--mt);text-transform:uppercase;letter-spacing:0.5px}
+.date-btn.selected .date-day{color:rgba(255,255,255,0.8)}
+.date-num{font-family:var(--fd);font-size:18px;font-weight:800;color:var(--tx)}
+.time-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:24px}
+.time-btn{background:rgba(255,255,255,0.04);border:1px solid var(--bd);border-radius:8px;padding:10px 8px;text-align:center;cursor:pointer;font-size:13px;font-weight:600;color:var(--mt);transition:all 0.2s;user-select:none}
+.time-btn:hover{border-color:rgba(232,103,26,0.4);color:var(--tx)}
+.time-btn.selected{background:var(--or);border-color:var(--or);color:#fff}
+
+/* PLAYER COUNT */
+.player-count{display:flex;align-items:center;gap:16px;margin-bottom:24px}
+.count-btn{width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,0.06);border:1px solid var(--bd);color:var(--tx);font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.2s;flex-shrink:0}
+.count-btn:hover{background:var(--dim);border-color:var(--or)}
+.count-display{font-family:var(--fd);font-size:36px;font-weight:900;color:var(--or);min-width:40px;text-align:center}
+.count-label{font-size:13px;color:var(--mt)}
+
+/* BUTTONS */
+.btn-primary{background:var(--or);color:#fff;border:none;padding:13px 28px;border-radius:8px;font-family:var(--fb);font-size:15px;font-weight:600;cursor:pointer;transition:background 0.2s,transform 0.15s;width:100%}
+.btn-primary:hover{background:var(--orl);transform:translateY(-1px)}
+.btn-primary:disabled{opacity:0.4;cursor:not-allowed;transform:none}
+.btn-outline{background:transparent;color:var(--tx);border:1px solid var(--bd);padding:13px 28px;border-radius:8px;font-family:var(--fb);font-size:15px;cursor:pointer;transition:all 0.2s;width:100%}
+.btn-outline:hover{border-color:var(--or);color:var(--or)}
+.btn-row{display:grid;grid-template-columns:1fr 2fr;gap:10px;margin-top:28px}
+
+/* SUMMARY PANEL */
+.summary-title{font-family:var(--fd);font-size:20px;font-weight:800;text-transform:uppercase;margin-bottom:20px;color:var(--or)}
+.summary-item{display:flex;justify-content:space-between;align-items:flex-start;padding:12px 0;border-bottom:0.5px solid var(--bd);gap:16px}
+.summary-item:last-of-type{border-bottom:none}
+.summary-key{font-size:12px;color:var(--mt);text-transform:uppercase;letter-spacing:0.5px;flex-shrink:0}
+.summary-val{font-size:13px;color:var(--tx);text-align:right;font-weight:500}
+.summary-price-row{display:flex;justify-content:space-between;align-items:center;margin-top:16px;padding-top:16px;border-top:1px solid var(--bd)}
+.summary-price-label{font-size:14px;font-weight:600;color:var(--tx)}
+.summary-price-val{font-family:var(--fd);font-size:30px;font-weight:900;color:var(--or)}
+.summary-note{font-size:11px;color:var(--ft);margin-top:10px;line-height:1.5}
+.summary-badge{background:var(--green-dim);border:1px solid rgba(29,158,117,0.3);border-radius:8px;padding:10px 14px;margin-top:16px;font-size:12px;color:var(--green);line-height:1.5}
+
+/* WAIVER CHECKBOX */
+.waiver-box{background:rgba(255,255,255,0.04);border:1px solid var(--bd);border-radius:10px;padding:16px;margin-bottom:16px}
+.waiver-check{display:flex;align-items:flex-start;gap:12px;cursor:pointer}
+.waiver-check input[type=checkbox]{width:18px;height:18px;flex-shrink:0;margin-top:2px;accent-color:var(--or)}
+.waiver-text{font-size:13px;color:var(--mt);line-height:1.55}
+.waiver-text strong{color:var(--tx)}
+
+/* SUCCESS */
+.success-screen{display:none;text-align:center;padding:60px 32px}
+.success-screen.active{display:block}
+.success-icon{font-size:64px;margin-bottom:20px}
+.success-title{font-family:var(--fd);font-size:42px;font-weight:900;text-transform:uppercase;color:var(--or);margin-bottom:10px}
+.success-sub{font-size:16px;color:var(--mt);max-width:480px;margin:0 auto 32px;line-height:1.7}
+.success-details{background:rgba(255,255,255,0.04);border:1px solid var(--bd);border-radius:14px;padding:24px;max-width:440px;margin:0 auto 28px;text-align:left}
+.success-detail-item{display:flex;justify-content:space-between;padding:8px 0;border-bottom:0.5px solid var(--bd);font-size:14px}
+.success-detail-item:last-child{border-bottom:none}
+.success-detail-key{color:var(--mt)}
+.success-detail-val{font-weight:600;color:var(--tx)}
+.social-share{background:var(--dim);border:1px solid rgba(232,103,26,0.3);border-radius:12px;padding:20px;max-width:440px;margin:0 auto}
+.social-share-title{font-size:13px;font-weight:600;color:var(--or);margin-bottom:12px;text-align:center}
+.share-btns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.share-btn{background:rgba(255,255,255,0.07);border:1px solid var(--bd);border-radius:8px;padding:8px 16px;font-size:13px;font-weight:600;color:var(--tx);cursor:pointer;transition:all 0.2s}
+.share-btn:hover{background:var(--dim);border-color:var(--or);color:var(--or)}
+
+/* RESPONSIVE */
+@media(max-width:768px){
+  .booking-layout{grid-template-columns:1fr}
+  .booking-summary{position:static;border-top:1px solid var(--bd)}
+  .booking-hero{padding:32px 20px 28px}
+  .hero-title{font-size:36px}
+  .booking-form{padding:24px 20px}
+  .booking-summary{padding:24px 20px}
+  .session-types{grid-template-columns:1fr}
+  .input-row{grid-template-columns:1fr}
+  .date-grid{grid-template-columns:repeat(4,1fr)}
+  nav{padding:0 20px}
+  .success-screen{padding:40px 20px}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">COURT VISION <span>BASKETBALL</span></div>
+  <a class="nav-back" href="court_vision_basketball_website.html">Back to main site</a>
+</nav>
+
+<div class="booking-hero">
+  <div class="hero-badge"><div class="badge-dot"></div><div class="badge-text">Outdoor Training · Ottawa</div></div>
+  <h1 class="hero-title">Roaming <span>Skills Lab</span></h1>
+  <p class="hero-sub">Elite coaching at your local court. Pick your spot, pick your time — we bring the drills, the energy, and the expertise. Book your session in under 2 minutes.</p>
+  <div class="hero-stats">
+    <div class="hstat"><div class="hstat-val">$60</div><div class="hstat-label">1-on-1 session</div></div>
+    <div class="hstat"><div class="hstat-val">$25</div><div class="hstat-label">Per player (group)</div></div>
+    <div class="hstat"><div class="hstat-val">24hr</div><div class="hstat-label">Confirmation</div></div>
+    <div class="hstat"><div class="hstat-val">24hr</div><div class="hstat-label">Confirmation</div></div>
+  </div>
+</div>
+
+<div class="booking-layout" id="bookingLayout">
+
+  <div class="booking-form">
+
+    <!-- STEP INDICATOR -->
+    <div class="step-indicator">
+      <div class="step-item"><div class="step-num active" id="snum-1">1</div><div class="step-label active" id="slabel-1">Session</div></div>
+      <div class="step-connector" id="sc-1"></div>
+      <div class="step-item"><div class="step-num" id="snum-2">2</div><div class="step-label" id="slabel-2">Location</div></div>
+      <div class="step-connector" id="sc-2"></div>
+      <div class="step-item"><div class="step-num" id="snum-3">3</div><div class="step-label" id="slabel-3">Date & Time</div></div>
+      <div class="step-connector" id="sc-3"></div>
+      <div class="step-item"><div class="step-num" id="snum-4">4</div><div class="step-label" id="slabel-4">Your Info</div></div>
+      <div class="step-connector" id="sc-4"></div>
+      <div class="step-item"><div class="step-num" id="snum-5">5</div><div class="step-label" id="slabel-5">Confirm</div></div>
+    </div>
+
+    <!-- STEP 1: SESSION TYPE -->
+    <div class="form-section active" id="step-1">
+      <div class="form-section-title">Choose your session</div>
+      <div class="form-section-sub">Choose the session that fits your goals. Pay at the court — cash, e-Transfer, or Tap.</div>
+      <div class="session-types">
+        <div class="session-type-card" onclick="selectSession(this,'1-on-1 Training','$60','60 min · Coach + 1 player')">
+          <div class="stc-icon">🏀</div>
+          <div class="stc-name">1-on-1 Training</div>
+          <div class="stc-desc">Dedicated coach focus entirely on your game. Ball handling, shooting, footwork.</div>
+          <div class="stc-price">$60 / session</div>
+        </div>
+        <div class="session-type-card" onclick="selectSession(this,'Group Session','$25/player','60 min · 2–5 players')">
+          <div class="stc-icon">👥</div>
+          <div class="stc-name">Group Session</div>
+          <div class="stc-desc">Bring your crew. Up to 5 players. Competitive drills, stations, and live reps.</div>
+          <div class="stc-price">$25 / player</div>
+        </div>
+        <div class="session-type-card" onclick="selectSession(this,'Skill Clinic','$20/player','90 min · Up to 10 players')">
+          <div class="stc-icon">📋</div>
+          <div class="stc-name">Outdoor Clinic</div>
+          <div class="stc-desc">Structured skill clinic at the park. Up to 10 players. Great for teams and friend groups.</div>
+          <div class="stc-price">$20 / player</div>
+        </div>
+        <div class="session-type-card" onclick="selectSession(this,'Monthly Pass','$150/mo','4 sessions · Best value')">
+          <div class="stc-icon">🗓️</div>
+          <div class="stc-name">Monthly Pass</div>
+          <div class="stc-desc">4 outdoor sessions per month. Best value for committed players. Book all 4 anytime.</div>
+          <div class="stc-price">$150 / month</div>
+        </div>
+      </div>
+      <div class="input-group">
+        <label>Number of players</label>
+        <div class="player-count">
+          <button class="count-btn" onclick="changeCount(-1)">−</button>
+          <div class="count-display" id="playerCount">1</div>
+          <div class="count-label">player(s)</div>
+          <button class="count-btn" onclick="changeCount(1)">+</button>
+        </div>
+      </div>
+      <button class="btn-primary" onclick="nextStep(1)" id="step1-btn" disabled>Continue → Choose Location</button>
+    </div>
+
+    <!-- STEP 2: COURT LOCATION -->
+    <div class="form-section" id="step-2">
+      <div class="form-section-title">Pick your court</div>
+      <div class="form-section-sub">Choose an active location or request your own local court anywhere in Ottawa.</div>
+      <div class="court-grid">
+        <div class="court-card" onclick="selectCourt(this,'Barrhaven District Park','Strandherd Dr, Barrhaven')">
+          <div class="court-map-icon">📍</div>
+          <div class="court-info"><div class="court-name">Barrhaven District Park</div><div class="court-detail">Strandherd Dr · 2 full courts · Lit at night</div></div>
+          <div class="court-tag tag-popular">Popular</div>
+        </div>
+        <div class="court-card" onclick="selectCourt(this,'Nepean Sportsplex Outdoor Courts','1701 Woodroffe Ave, Nepean')">
+          <div class="court-map-icon">📍</div>
+          <div class="court-info"><div class="court-name">Nepean Sportsplex Outdoor Courts</div><div class="court-detail">1701 Woodroffe Ave · 3-on-3 & full court</div></div>
+          <div class="court-tag tag-free">Free Parking</div>
+        </div>
+        <div class="court-card" onclick="selectCourt(this,'Walter Baker Sports Centre','100 Charlie Rogers Pl, Kanata')">
+          <div class="court-map-icon">📍</div>
+          <div class="court-info"><div class="court-name">Walter Baker Sports Centre</div><div class="court-detail">100 Charlie Rogers Pl, Kanata · Full outdoor court</div></div>
+          <div class="court-tag tag-free">Free Parking</div>
+        </div>
+        <div class="court-card" onclick="selectCourt(this,'Greenboro Community Centre','Green Bank Rd, Greenboro')">
+          <div class="court-map-icon">📍</div>
+          <div class="court-info"><div class="court-name">Greenboro Community Centre</div><div class="court-detail">Green Bank Rd · South Ottawa · 1 full court</div></div>
+          <div class="court-tag tag-popular">Popular</div>
+        </div>
+        <div class="court-card" onclick="selectCourt(this,'Hurdman Park','Smyth Rd & Hurdman Rd')">
+          <div class="court-map-icon">📍</div>
+          <div class="court-info"><div class="court-name">Hurdman Park Courts</div><div class="court-detail">Smyth Rd & Hurdman Rd · East Ottawa · 2 courts</div></div>
+          <div class="court-tag tag-free">LRT Access</div>
+        </div>
+        <div class="court-card" id="customCourtCard" onclick="selectCustomCourt(this)">
+          <div class="court-map-icon">➕</div>
+          <div class="court-info"><div class="court-name">Request your court</div><div class="court-detail">Any outdoor court in Ottawa — enter the address below</div></div>
+          <div class="court-tag" style="background:rgba(127,119,221,0.15);color:#AFA9EC;border-color:rgba(127,119,221,0.3)">Custom</div>
+        </div>
+      </div>
+      <div class="custom-court-input" id="customCourtInput" style="display:none">
+        <div class="input-group">
+          <label>Court address or park name</label>
+          <input type="text" id="customCourtText" placeholder="e.g. Vincent Massey Park, Ottawa" oninput="updateCustomCourt()"/>
+        </div>
+      </div>
+      <div class="btn-row">
+        <button class="btn-outline" onclick="prevStep(2)">← Back</button>
+        <button class="btn-primary" onclick="nextStep(2)" id="step2-btn" disabled>Continue → Pick Date & Time</button>
+      </div>
+    </div>
+
+    <!-- STEP 3: DATE & TIME -->
+    <div class="form-section" id="step-3">
+      <div class="form-section-title">When works for you?</div>
+      <div class="form-section-sub">Select a date and time. We'll confirm within 24 hours. Sessions run rain or shine — we notify you of weather cancellations by 7 AM same day.</div>
+      <label style="margin-bottom:12px;display:block">Select a date (next 2 weeks)</label>
+      <div class="date-grid" id="dateGrid"></div>
+      <label style="margin-bottom:12px;display:block">Select a time slot</label>
+      <div class="time-grid">
+        <div class="time-btn" onclick="selectTime(this,'7:00 AM')">7:00 AM</div>
+        <div class="time-btn" onclick="selectTime(this,'8:00 AM')">8:00 AM</div>
+        <div class="time-btn" onclick="selectTime(this,'9:00 AM')">9:00 AM</div>
+        <div class="time-btn" onclick="selectTime(this,'10:00 AM')">10:00 AM</div>
+        <div class="time-btn" onclick="selectTime(this,'11:00 AM')">11:00 AM</div>
+        <div class="time-btn" onclick="selectTime(this,'12:00 PM')">12:00 PM</div>
+        <div class="time-btn" onclick="selectTime(this,'2:00 PM')">2:00 PM</div>
+        <div class="time-btn" onclick="selectTime(this,'3:00 PM')">3:00 PM</div>
+        <div class="time-btn" onclick="selectTime(this,'4:00 PM')">4:00 PM</div>
+        <div class="time-btn" onclick="selectTime(this,'5:00 PM')">5:00 PM</div>
+        <div class="time-btn" onclick="selectTime(this,'6:00 PM')">6:00 PM</div>
+        <div class="time-btn" onclick="selectTime(this,'7:00 PM')">7:00 PM</div>
+      </div>
+      <div class="btn-row">
+        <button class="btn-outline" onclick="prevStep(3)">← Back</button>
+        <button class="btn-primary" onclick="nextStep(3)" id="step3-btn" disabled>Continue → Your Info</button>
+      </div>
+    </div>
+
+    <!-- STEP 4: PLAYER INFO -->
+    <div class="form-section" id="step-4">
+      <div class="form-section-title">Your information</div>
+      <div class="form-section-sub">We use this to confirm your session and send you session details. We never spam.</div>
+      <div class="input-row">
+        <div class="input-group" style="margin-bottom:0">
+          <label>First name</label>
+          <input type="text" id="firstName" placeholder="Jordan" oninput="checkStep4()"/>
+        </div>
+        <div class="input-group" style="margin-bottom:0">
+          <label>Last name</label>
+          <input type="text" id="lastName" placeholder="Smith" oninput="checkStep4()"/>
+        </div>
+      </div>
+      <div class="input-group" style="margin-top:14px">
+        <label>Email address</label>
+        <input type="email" id="email" placeholder="jordan@email.com" oninput="checkStep4()"/>
+      </div>
+      <div class="input-group">
+        <label>Phone number</label>
+        <input type="tel" id="phone" placeholder="(613) 000-0000" oninput="checkStep4()"/>
+      </div>
+      <div class="input-group">
+        <label>Age / skill level</label>
+        <select id="skillLevel" onchange="checkStep4()">
+          <option value="">Select your level...</option>
+          <option>Under 12 — Beginner</option>
+          <option>Under 12 — Developing</option>
+          <option>13–15 — Beginner</option>
+          <option>13–15 — Competitive</option>
+          <option>16–18 — High School Level</option>
+          <option>16–18 — AAU / Rep Level</option>
+          <option>18+ — Recreational</option>
+          <option>18+ — Competitive / Post-secondary</option>
+        </select>
+      </div>
+      <div class="input-group">
+        <label>What do you most want to work on? (optional)</label>
+        <textarea id="goals" placeholder="e.g. Ball handling, pull-up jumper, getting quicker off the dribble..."></textarea>
+      </div>
+      <div class="btn-row">
+        <button class="btn-outline" onclick="prevStep(4)">← Back</button>
+        <button class="btn-primary" onclick="nextStep(4)" id="step4-btn" disabled>Continue → Review & Confirm</button>
+      </div>
+    </div>
+
+    <!-- STEP 5: CONFIRM -->
+    <div class="form-section" id="step-5">
+      <div class="form-section-title">Review & confirm</div>
+      <div class="form-section-sub">Double-check your details below. Once confirmed, we'll send you a confirmation and reach out within 24 hours.</div>
+
+      <div class="waiver-box">
+        <label class="waiver-check">
+          <input type="checkbox" id="waiverCheck" onchange="checkWaiver()"/>
+          <div class="waiver-text"><strong>Liability Waiver:</strong> I acknowledge that outdoor basketball training involves physical activity and inherent risks. I voluntarily participate and release Court Vision Basketball from liability for injuries sustained during sessions. I confirm that I (or my child) am in adequate physical health to participate.</div>
+        </label>
+      </div>
+      <div class="waiver-box">
+        <label class="waiver-check">
+          <input type="checkbox" id="photoCheck"/>
+          <div class="waiver-text"><strong>Photo/Video Consent (optional):</strong> I give Court Vision Basketball permission to photograph or film this session for use on social media and marketing materials.</div>
+        </label>
+      </div>
+
+      <div id="confirmSummary" style="background:rgba(255,255,255,0.03);border:1px solid var(--bd);border-radius:12px;padding:18px;margin-bottom:16px"></div>
+
+      <div style="background:var(--green-dim);border:1px solid rgba(29,158,117,0.3);border-radius:10px;padding:12px 16px;font-size:13px;color:#5DCAA5;margin-bottom:20px;line-height:1.55">
+        ✓ Payment is collected at the session — cash, e-Transfer, or Tap accepted.
+      </div>
+
+      <div class="btn-row">
+        <button class="btn-outline" onclick="prevStep(5)">← Back</button>
+        <button class="btn-primary" onclick="submitBooking()" id="step5-btn" disabled>Confirm Booking →</button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- SUMMARY PANEL -->
+  <div class="booking-summary">
+    <div class="summary-title">Your booking</div>
+    <div class="summary-item"><span class="summary-key">Session</span><span class="summary-val" id="sum-session">Not selected</span></div>
+    <div class="summary-item"><span class="summary-key">Players</span><span class="summary-val" id="sum-players">1</span></div>
+    <div class="summary-item"><span class="summary-key">Court</span><span class="summary-val" id="sum-court">Not selected</span></div>
+    <div class="summary-item"><span class="summary-key">Date</span><span class="summary-val" id="sum-date">Not selected</span></div>
+    <div class="summary-item"><span class="summary-key">Time</span><span class="summary-val" id="sum-time">Not selected</span></div>
+    <div class="summary-price-row">
+      <span class="summary-price-label">Total</span>
+      <span class="summary-price-val" id="sum-price">$0</span>
+    </div>
+    <div class="summary-note" id="sum-note">Pay at the session — cash, e-Transfer, or Tap. No credit card required to book.</div>
+    <div class="summary-badge">✓ No credit card required. No account needed. Just show up and work.</div>
+
+    <div style="margin-top:24px;padding-top:20px;border-top:1px solid var(--bd)">
+      <div style="font-size:11px;font-weight:700;color:var(--mt);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:12px">Have questions?</div>
+      <div style="font-size:13px;color:var(--mt);line-height:1.7">
+        📧 info@courtvisionbasketball.ca<br>
+        📱 Instagram: @courtvisionbball<br>
+        ⏱ We reply within 2 hours
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- SUCCESS SCREEN -->
+<div class="success-screen" id="successScreen">
+  <div class="success-icon">🏀</div>
+  <h2 class="success-title">You're Booked!</h2>
+  <p class="success-sub">Your Roaming Skills Lab session request has been submitted. We'll confirm within 24 hours by email. See you at the court.</p>
+  <div class="success-details" id="successDetails"></div>
+  <div class="social-share">
+    <div class="social-share-title">📱 Help us grow — share that you're training with CVB</div>
+    <div class="share-btns">
+      <button class="share-btn" onclick="shareIG()">Share on Instagram</button>
+      <button class="share-btn" onclick="copyShare()">Copy share text</button>
+      <button class="share-btn" onclick="shareWhatsApp()">WhatsApp</button>
+    </div>
+  </div>
+  <br>
+  <a href="court_vision_basketball_website.html" style="color:var(--or);font-size:14px;text-decoration:none;font-weight:600">← Back to Court Vision Basketball</a>
+</div>
+
+<script>
+const state = {
+  sessionType: '', sessionPrice: '', sessionDesc: '',
+  court: '', courtAddr: '',
+  date: '', time: '',
+  players: 1,
+  firstName: '', lastName: '', email: '', phone: '', skill: '', goals: '',
+  currentStep: 1
+};
+
+// Date grid
+function buildDateGrid() {
+  const grid = document.getElementById('dateGrid');
+  grid.innerHTML = '';
+  const days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  const now = new Date();
+  for (let i = 1; i <= 14; i++) {
+    const d = new Date(now);
+    d.setDate(now.getDate() + i);
+    const isPast = false;
+    const btn = document.createElement('div');
+    btn.className = 'date-btn' + (d.getDay() === 0 ? ' disabled' : '');
+    btn.innerHTML = `<div class="date-day">${days[d.getDay()]}</div><div class="date-num">${d.getDate()}</div>`;
+    if (d.getDay() !== 0) {
+      const dateStr = d.toLocaleDateString('en-CA', {month:'short', day:'numeric', year:'numeric'});
+      btn.onclick = () => selectDate(btn, dateStr);
+    }
+    grid.appendChild(btn);
+  }
+}
+buildDateGrid();
+
+function selectDate(btn, dateStr) {
+  document.querySelectorAll('.date-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  state.date = dateStr;
+  document.getElementById('sum-date').textContent = dateStr;
+  checkStep3();
+}
+
+function selectTime(btn, time) {
+  document.querySelectorAll('.time-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  state.time = time;
+  document.getElementById('sum-time').textContent = time;
+  checkStep3();
+}
+
+function selectSession(card, name, price, desc) {
+  document.querySelectorAll('.session-type-card').forEach(c => c.classList.remove('selected'));
+  card.classList.add('selected');
+  state.sessionType = name; state.sessionPrice = price; state.sessionDesc = desc;
+  document.getElementById('sum-session').textContent = name;
+  updatePrice();
+  document.getElementById('step1-btn').disabled = false;
+}
+
+function changeCount(delta) {
+  state.players = Math.min(10, Math.max(1, state.players + delta));
+  document.getElementById('playerCount').textContent = state.players;
+  document.getElementById('sum-players').textContent = state.players + ' player' + (state.players > 1 ? 's' : '');
+  updatePrice();
+}
+
+function updatePrice() {
+  if (!state.sessionType) return;
+  let total = '—';
+  if (state.sessionType === '1-on-1 Training') { total = '$60'; }
+  else if (state.sessionType === 'Group Session') { total = '$' + (25 * state.players); }
+  else if (state.sessionType === 'Outdoor Clinic') { total = '$' + (20 * state.players); }
+  else if (state.sessionType === 'Monthly Pass') { total = '$150'; }
+  document.getElementById('sum-price').textContent = total;
+}
+
+function selectCourt(card, name, addr) {
+  document.querySelectorAll('.court-card').forEach(c => c.classList.remove('selected'));
+  card.classList.add('selected');
+  document.getElementById('customCourtInput').style.display = 'none';
+  state.court = name; state.courtAddr = addr;
+  document.getElementById('sum-court').textContent = name;
+  document.getElementById('step2-btn').disabled = false;
+}
+
+function selectCustomCourt(card) {
+  document.querySelectorAll('.court-card').forEach(c => c.classList.remove('selected'));
+  card.classList.add('selected');
+  document.getElementById('customCourtInput').style.display = 'block';
+  document.getElementById('step2-btn').disabled = true;
+}
+
+function updateCustomCourt() {
+  const val = document.getElementById('customCourtText').value.trim();
+  if (val.length > 3) {
+    state.court = val; state.courtAddr = 'Ottawa, ON';
+    document.getElementById('sum-court').textContent = val;
+    document.getElementById('step2-btn').disabled = false;
+  } else { document.getElementById('step2-btn').disabled = true; }
+}
+
+function checkStep3() {
+  document.getElementById('step3-btn').disabled = !(state.date && state.time);
+}
+
+function checkStep4() {
+  const ok = document.getElementById('firstName').value.trim() &&
+             document.getElementById('lastName').value.trim() &&
+             document.getElementById('email').value.includes('@') &&
+             document.getElementById('phone').value.trim().length > 7 &&
+             document.getElementById('skillLevel').value;
+  document.getElementById('step4-btn').disabled = !ok;
+  if (ok) {
+    state.firstName = document.getElementById('firstName').value.trim();
+    state.lastName = document.getElementById('lastName').value.trim();
+    state.email = document.getElementById('email').value.trim();
+    state.phone = document.getElementById('phone').value.trim();
+    state.skill = document.getElementById('skillLevel').value;
+    state.goals = document.getElementById('goals').value.trim();
+  }
+}
+
+function checkWaiver() {
+  document.getElementById('step5-btn').disabled = !document.getElementById('waiverCheck').checked;
+  buildConfirmSummary();
+}
+
+function buildConfirmSummary() {
+  const el = document.getElementById('confirmSummary');
+  const price = state.sessionType === '1-on-1 Training' ? '$60' :
+    state.sessionType === 'Group Session' ? '$'+(25*state.players) :
+    state.sessionType === 'Monthly Pass' ? '$150' : '$'+(20*state.players);
+  el.innerHTML = `
+    <div style="font-size:12px;font-weight:700;color:var(--or);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:12px">Booking Summary</div>
+    ${row('Player', state.firstName+' '+state.lastName)}
+    ${row('Session', state.sessionType)}
+    ${row('Players', state.players)}
+    ${row('Court', state.court)}
+    ${row('Date', state.date)}
+    ${row('Time', state.time)}
+    ${row('Skill Level', state.skill)}
+    ${row('Total Due', price, true)}
+  `;
+}
+
+function row(k, v, bold) {
+  return `<div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:0.5px solid var(--bd);font-size:13px"><span style="color:var(--mt)">${k}</span><span style="font-weight:${bold?700:500};color:${bold?'var(--or)':'var(--tx)'}">${v}</span></div>`;
+}
+
+function nextStep(from) {
+  document.getElementById('step-'+from).classList.remove('active');
+  document.getElementById('step-'+(from+1)).classList.add('active');
+  setStepDone(from);
+  setStepActive(from+1);
+  state.currentStep = from+1;
+  if (from+1 === 5) buildConfirmSummary();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function prevStep(current) {
+  document.getElementById('step-'+current).classList.remove('active');
+  document.getElementById('step-'+(current-1)).classList.add('active');
+  setStepActive(current-1);
+  state.currentStep = current-1;
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function setStepActive(n) {
+  document.getElementById('snum-'+n).className = 'step-num active';
+  document.getElementById('slabel-'+n).className = 'step-label active';
+}
+
+function setStepDone(n) {
+  document.getElementById('snum-'+n).className = 'step-num done';
+  document.getElementById('snum-'+n).textContent = '✓';
+  document.getElementById('slabel-'+n).className = 'step-label';
+  if (document.getElementById('sc-'+n)) document.getElementById('sc-'+n).className = 'step-connector done';
+}
+
+function submitBooking() {
+  document.getElementById('bookingLayout').style.display = 'none';
+  const success = document.getElementById('successScreen');
+  success.classList.add('active');
+  const price = state.sessionType === '1-on-1 Training' ? '$60 at session' :
+    state.sessionType === 'Group Session' ? '$'+(25*state.players)+' at session' :
+    state.sessionType === 'Monthly Pass' ? '$150 at session' : '$'+(20*state.players)+' at session';
+  document.getElementById('successDetails').innerHTML = `
+    ${row('Name', state.firstName+' '+state.lastName)}
+    ${row('Session', state.sessionType)}
+    ${row('Court', state.court)}
+    ${row('Date', state.date)}
+    ${row('Time', state.time)}
+    ${row('Payment', price, true)}
+  `;
+  window.scrollTo({top:0,behavior:'smooth'});
+
+  // Build Formspree-style mailto fallback
+  const body = `New Roaming Skills Lab Booking%0A%0AName: ${state.firstName} ${state.lastName}%0AEmail: ${state.email}%0APhone: ${state.phone}%0ASession: ${state.sessionType}%0APlayers: ${state.players}%0ACourt: ${state.court}%0ADate: ${state.date}%0ATime: ${state.time}%0ASkill Level: ${state.skill}%0AGoals: ${state.goals}%0APhoto consent: ${document.getElementById('photoCheck').checked ? 'Yes' : 'No'}`;
+  // Auto-open mailto so coach receives the booking (free solution)
+  setTimeout(() => {
+    window.location.href = `mailto:info@courtvisionbasketball.ca?subject=Roaming Skills Lab Booking — ${state.firstName} ${state.lastName}&body=${body}`;
+  }, 1500);
+}
+
+function shareIG() { alert('Copy this caption for your Instagram story:\n\n"Just booked a Roaming Skills Lab session with @courtvisionbball 🏀🔥 Training at the court this weekend — time to work. Link in their bio to book yours."'); }
+function copyShare() {
+  navigator.clipboard.writeText('Just booked an outdoor training session with Court Vision Basketball\'s Roaming Skills Lab 🏀 — elite coaching right at my local court. Book yours at courtvisionbasketball.ca/roaming-booking.html @courtvisionbball').then(() => alert('Copied to clipboard!'));
+}
+function shareWhatsApp() { window.open('https://wa.me/?text=Just+booked+a+Roaming+Skills+Lab+session+with+Court+Vision+Basketball+🏀+Elite+outdoor+training+in+Ottawa.+Book+yours+at+courtvisionbasketball.ca'); }
+</script>
+</body>
+</html>
